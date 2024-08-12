@@ -54,15 +54,12 @@ namespace MediaPlayer
 
         private void UpdatePrevImage(VideoItem item, VideoConfig config)
         {
-            if (testingMod && !forceDownload)
+            if ((!testingMod || !forceDownload) && TryGetPrevImage(GetFileName(config.URLImage), out var sprite))
             {
-                if (TryGetPrevImage(GetFileName(config.URLImage), out var sprite))
-                {
-                    item.SetPrevImage(sprite);
-                    return;
-                }
+                item.SetPrevImage(sprite);
+                return;
             }
-
+            
             DownloadImageAsync(config.URLImage, item);
         }
 
@@ -73,7 +70,6 @@ namespace MediaPlayer
             var filePath = Path.Combine(Application.persistentDataPath, $"{imageName}");
             try
             {
-                Debug.Log($"File.Exists(filePath) {File.Exists(filePath)}");
                 if (File.Exists(filePath))
                 {
                     var bytes = File.ReadAllBytes(filePath);
