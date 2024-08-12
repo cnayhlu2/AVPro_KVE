@@ -1,4 +1,3 @@
-using System;
 using RenderHeads.Media.AVProVideo;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -11,19 +10,23 @@ namespace MediaPlayer
         [SerializeField] private PlayListController playList;
         [SerializeField] private ControlPanel controlPanel;
 
-        public Action<bool> playerStateChange;
+        // public Action<bool> playerStateChange;
 
         private VideoConfig currentVideo;
 
         private void Awake()
         {
-            playList.Init(this);
-            controlPanel.Init(this);
+            playList.SetVideoConfig += SetVideo;
+            playList.Init();
+            controlPanel.Click += TogglePlayButton;
+            controlPanel.Init();
             player.Events.AddListener(HandleEvent);
         }
 
         private void OnDestroy()
         {
+            playList.SetVideoConfig -= SetVideo;
+            controlPanel.Click -= TogglePlayButton;
             player.Events.RemoveListener(HandleEvent);
         }
 
@@ -52,7 +55,8 @@ namespace MediaPlayer
             switch (eventType)
             {
                 case MediaPlayerEvent.EventType.FinishedPlaying:
-                    playerStateChange?.Invoke(false);
+                    // playerStateChange?.Invoke(false);
+                    ChangeState(false);
                     break;
             }
         }
@@ -60,7 +64,8 @@ namespace MediaPlayer
         private void Pause()
         {
             player.Pause();
-            playerStateChange?.Invoke(false);
+            // playerStateChange?.Invoke(false);
+            ChangeState(false);
         }
 
         [Button]
@@ -70,7 +75,14 @@ namespace MediaPlayer
                 player.OpenMedia(new MediaPath($"{currentVideo.URLVideo}", MediaPathType.AbsolutePathOrURL));
             else
                 player.Play();
-            playerStateChange?.Invoke(true);
+            // playerStateChange?.Invoke(true);
+            ChangeState(true);
+        }
+
+        private void ChangeState(bool state)
+        {
+            controlPanel.StateChange(state);
+            // playerStateChange?.Invoke(true);
         }
     }
 }

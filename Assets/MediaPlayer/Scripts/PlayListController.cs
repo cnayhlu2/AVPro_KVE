@@ -27,11 +27,13 @@ namespace MediaPlayer
         private Dictionary<VideoItem, VideoConfig> videoList = new Dictionary<VideoItem, VideoConfig>();
 
 
-        private MediaPlayerManager mediaPlayerManager;
+        // private MediaPlayerManager mediaPlayerManager;
 
-        public void Init(MediaPlayerManager mediaPlayerManager)
+        public Action<VideoConfig> SetVideoConfig;
+
+        public void Init()
         {
-            this.mediaPlayerManager = mediaPlayerManager;
+            // this.mediaPlayerManager = mediaPlayerManager;
 
             foreach (var config in Config.Videos)
             {
@@ -121,7 +123,6 @@ namespace MediaPlayer
 
         private void SaveTexture(Texture2D texture2D, string fileName)
         {
-            Debug.Log($"file name {fileName}");
             try
             {
                 if (texture2D == null)
@@ -144,7 +145,7 @@ namespace MediaPlayer
         private void SetVideo(VideoConfig config)
         {
             videoName.text = config.Name;
-            mediaPlayerManager.SetVideo(config);
+            SetVideoConfig?.Invoke(config);
         }
 
 

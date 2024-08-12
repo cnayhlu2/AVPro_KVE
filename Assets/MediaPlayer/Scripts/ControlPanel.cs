@@ -14,26 +14,35 @@ namespace MediaPlayer
 
         [SerializeField] private Button buttonPlayPause;
 
-        private MediaPlayerManager mediaPlayerManager;
+        // private MediaPlayerManager mediaPlayerManager;
 
-        public void Init(MediaPlayerManager mediaPlayerManager)
+        public Action Click;
+
+        public void Init()//MediaPlayerManager mediaPlayerManager
         {
-            this.mediaPlayerManager = mediaPlayerManager;
-            buttonPlayPause.onClick.AddListener(mediaPlayerManager.TogglePlayButton);
-            this.mediaPlayerManager.playerStateChange += OnPlayerStateChange;
+            // this.mediaPlayerManager = mediaPlayerManager;
+            
+            //mediaPlayerManager.TogglePlayButton
+            buttonPlayPause.onClick.AddListener(OnClick);
+            // this.mediaPlayerManager.playerStateChange += OnPlayerStateChange;
         }
 
         ~ControlPanel()
         {
-            if (mediaPlayerManager == null)
-                return;
+            // if (mediaPlayerManager == null)
+            //     return;
             buttonPlayPause.onClick.RemoveAllListeners();
-            this.mediaPlayerManager.playerStateChange -= OnPlayerStateChange;
+            // this.mediaPlayerManager.playerStateChange -= OnPlayerStateChange;
         }
 
-        private void OnPlayerStateChange(bool state)
+        public void StateChange(bool state)
         {
             imagePlayPause.sprite = (!state) ? playSprite : pauseSprite;
+        }
+
+        private void OnClick()
+        {
+            Click?.Invoke();
         }
     }
 }
